@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { calculatePlates, type PlateAllocation } from "../lib/calculate-plates";
+import { buildShareUrl } from "../lib/use-calculator-state";
 
 interface Props {
   targetWeight: number;
@@ -24,7 +25,8 @@ export function PlateResults({
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      const url = buildShareUrl({ targetWeight, barbellWeight, plateInventory });
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}

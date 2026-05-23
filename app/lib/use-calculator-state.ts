@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useCallback, useState } from "react";
 import {
   ALL_PLATES,
   DEFAULT_BAR,
@@ -29,7 +28,8 @@ function serializeInventory(inventory: Record<number, number>): string {
     .join(",");
 }
 
-function getInitialState(searchParams: URLSearchParams) {
+function getInitialState() {
+  const searchParams = new URLSearchParams(window.location.search);
   const urlTarget = searchParams.get("target");
   const urlBar = searchParams.get("bar");
   const urlInv = parseInventoryParam(searchParams.get("inv"));
@@ -48,17 +48,7 @@ function getInitialState(searchParams: URLSearchParams) {
 }
 
 export function useCalculatorState() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [state, setState] = useState(() => getInitialState(searchParams));
-
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (state.targetWeight) params.set("target", String(state.targetWeight));
-    if (state.barbellWeight) params.set("bar", String(state.barbellWeight));
-    const inv = serializeInventory(state.plateInventory);
-    if (inv) params.set("inv", inv);
-    setSearchParams(params, { replace: true });
-  }, [state, setSearchParams]);
+  const [state, setState] = useState(getInitialState);
 
   const setTargetWeight = useCallback((weight: number) => {
     setState((prev) => ({
@@ -101,4 +91,18 @@ export function useCalculatorState() {
     setPlateCount,
     adjustTargetWeight,
   };
+}
+
+export function buildShareUrl(state: {
+  targetWeight: number;
+  barbellWeight: number;
+  plateInventory: Record<number, number>;
+}) {
+  const params = new URLSearchParams();
+  if (state.targetWeight) params.set("target", String(state.targetWeight));
+  if (state.barbellWeight) params.set("bar", String(state.barbellWeight));
+  const inv = serializeInventory(state.plateInventory);
+  if (inv) params.set("inv", inv);
+  const qs = params.toString();
+  return `${window.location.origin}${window.location.pathname}${qs ? `?${qs}` : ""}`;
 }
