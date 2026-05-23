@@ -1,9 +1,17 @@
+import { useState, useEffect } from "react";
+
 interface Props {
   barbellWeight: number;
   onChange: (weight: number) => void;
 }
 
 export function BarbellConfigSection({ barbellWeight, onChange }: Props) {
+  const [value, setValue] = useState(String(barbellWeight));
+
+  useEffect(() => {
+    setValue(String(barbellWeight));
+  }, [barbellWeight]);
+
   return (
     <section className="space-y-3">
       <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
@@ -12,9 +20,12 @@ export function BarbellConfigSection({ barbellWeight, onChange }: Props) {
       <div className="flex items-center gap-2">
         <input
           type="number"
-          value={barbellWeight}
+          value={value}
           onChange={(e) => {
-            const n = Number(e.target.value);
+            const raw = e.target.value;
+            setValue(raw);
+            if (raw === "") return;
+            const n = Number(raw);
             if (!isNaN(n)) onChange(n);
           }}
           className="w-20 px-2 py-1.5 text-center border border-gray-200 rounded-lg text-sm tabular-nums focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"

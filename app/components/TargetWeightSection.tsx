@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 interface Props {
   targetWeight: number;
   barbellWeight: number;
@@ -11,6 +13,12 @@ export function TargetWeightSection({
   onTargetChange,
   onAdjust,
 }: Props) {
+  const [value, setValue] = useState(String(targetWeight));
+
+  useEffect(() => {
+    setValue(String(targetWeight));
+  }, [targetWeight]);
+
   return (
     <section className="space-y-3">
       <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
@@ -30,9 +38,12 @@ export function TargetWeightSection({
         </button>
         <input
           type="number"
-          value={targetWeight}
+          value={value}
           onChange={(e) => {
-            const n = Number(e.target.value);
+            const raw = e.target.value;
+            setValue(raw);
+            if (raw === "") return;
+            const n = Number(raw);
             if (!isNaN(n)) onTargetChange(n);
           }}
           className="w-20 px-2 py-1.5 text-center border border-gray-200 rounded-lg text-sm tabular-nums focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"

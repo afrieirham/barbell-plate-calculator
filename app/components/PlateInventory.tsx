@@ -1,8 +1,42 @@
+import { useState, useEffect } from "react";
 import { ALL_PLATES } from "../lib/constants";
 
 interface Props {
   plateInventory: Record<number, number>;
   onChange: (weight: number, count: number) => void;
+}
+
+function PlateCountInput({
+  weight,
+  count,
+  onChange,
+}: {
+  weight: number;
+  count: number;
+  onChange: (weight: number, count: number) => void;
+}) {
+  const [value, setValue] = useState(String(count));
+
+  useEffect(() => {
+    setValue(String(count));
+  }, [count]);
+
+  return (
+    <input
+      type="number"
+      value={value}
+      onChange={(e) => {
+        const raw = e.target.value;
+        setValue(raw);
+        if (raw === "") return;
+        const n = Number(raw);
+        if (!isNaN(n)) onChange(weight, Math.max(n, 0));
+      }}
+      className="w-10 h-7 text-center text-xs font-medium tabular-nums border border-gray-200 rounded bg-white text-gray-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ml-auto"
+      min={0}
+      max={99}
+    />
+  );
 }
 
 export function PlateInventory({ plateInventory, onChange }: Props) {
@@ -32,16 +66,10 @@ export function PlateInventory({ plateInventory, onChange }: Props) {
                 {weight}
                 <span className="text-[10px] font-normal ml-0.5">kg</span>
               </span>
-              <input
-                type="number"
-                value={count}
-                onChange={(e) => {
-                  const n = Number(e.target.value);
-                  if (!isNaN(n)) onChange(weight, Math.max(n, 0));
-                }}
-                className="w-10 h-7 text-center text-xs font-medium tabular-nums border border-gray-200 rounded bg-white text-gray-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ml-auto"
-                min={0}
-                max={99}
+              <PlateCountInput
+                weight={weight}
+                count={count}
+                onChange={onChange}
               />
             </div>
           );
