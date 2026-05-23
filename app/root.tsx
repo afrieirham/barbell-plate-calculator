@@ -36,6 +36,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
           src="https://analytics.afrieirham.com/script.js"
           data-website-id="f89c8375-e4a2-47e2-a5ea-4168f21d850b"
         />
+
+        <meta
+          property="og:url"
+          content="https://barbell-plates-calculator.pages.dev/"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:image"
+          content="https://barbell-plates-calculator.pages.dev/og.png"
+        />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          property="twitter:domain"
+          content="barbell-plates-calculator.pages.dev"
+        />
+        <meta
+          property="twitter:url"
+          content="https://barbell-plates-calculator.pages.dev/"
+        />
+        <meta
+          name="twitter:image"
+          content="https://barbell-plates-calculator.pages.dev/og.png"
+        />
       </head>
       <body>
         {children}
