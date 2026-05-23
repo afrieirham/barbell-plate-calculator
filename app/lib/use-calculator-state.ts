@@ -5,22 +5,7 @@ import {
   DEFAULT_BAR,
   DEFAULT_PLATE_INVENTORY,
   DEFAULT_TARGET,
-  STORAGE_KEY,
 } from "./constants";
-
-interface StoredState {
-  targetWeight: number;
-  barbellWeight: number;
-  plateInventory: Record<number, number>;
-}
-
-function readFromStorage(): Partial<StoredState> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return {};
-}
 
 function parseInventoryParam(value: string | null): Record<number, number> | null {
   if (!value) return null;
@@ -45,8 +30,6 @@ function serializeInventory(inventory: Record<number, number>): string {
 }
 
 function getInitialState(searchParams: URLSearchParams) {
-  const stored = readFromStorage();
-
   const urlTarget = searchParams.get("target");
   const urlBar = searchParams.get("bar");
   const urlInv = parseInventoryParam(searchParams.get("inv"));
@@ -55,12 +38,12 @@ function getInitialState(searchParams: URLSearchParams) {
     targetWeight:
       urlTarget !== null
         ? Math.max(Number(urlTarget) || 0, 1)
-        : (stored.targetWeight ?? DEFAULT_TARGET),
+        : DEFAULT_TARGET,
     barbellWeight:
       urlBar !== null
         ? Math.max(Number(urlBar) || 0, 0)
-        : (stored.barbellWeight ?? DEFAULT_BAR),
-    plateInventory: urlInv ?? stored.plateInventory ?? { ...DEFAULT_PLATE_INVENTORY },
+        : DEFAULT_BAR,
+    plateInventory: urlInv ?? { ...DEFAULT_PLATE_INVENTORY },
   };
 }
 
@@ -75,7 +58,6 @@ export function useCalculatorState() {
     const inv = serializeInventory(state.plateInventory);
     if (inv) params.set("inv", inv);
     setSearchParams(params, { replace: true });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state, setSearchParams]);
 
   const setTargetWeight = useCallback((weight: number) => {
