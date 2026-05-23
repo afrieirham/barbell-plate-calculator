@@ -25,7 +25,11 @@ export function PlateResults({
 
   const handleCopyLink = async () => {
     try {
-      const url = buildShareUrl({ targetWeight, barbellWeight, plateInventory });
+      const url = buildShareUrl({
+        targetWeight,
+        barbellWeight,
+        plateInventory,
+      });
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -104,7 +108,7 @@ export function PlateResults({
       >
         {copied ? (
           <>
-            <span className="text-green-600">✓</span> Link copied!
+            <span className="text-indigo-700">✓</span> Link copied!
           </>
         ) : (
           <>
