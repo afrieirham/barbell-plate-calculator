@@ -10,8 +10,7 @@ export function meta({}: Route.MetaArgs) {
     { title: "Barbell Plate Calculator" },
     {
       name: "description",
-      content:
-        "Calculate how to load a barbell to reach your target weight.",
+      content: "Calculate how to load a barbell to reach your target weight.",
     },
   ];
 }
@@ -28,7 +27,7 @@ export default function Home() {
   } = useCalculatorState();
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10 space-y-10">
+    <div className="max-w-xl mx-auto px-4 py-10 space-y-6">
       <header>
         <h1 className="text-lg font-bold text-gray-900">
           Barbell Plate Calculator
