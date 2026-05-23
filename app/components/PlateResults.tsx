@@ -4,7 +4,7 @@ import { calculatePlates, type PlateAllocation } from "../lib/calculate-plates";
 interface Props {
   targetWeight: number;
   barbellWeight: number;
-  selectedPlates: number[];
+  plateInventory: Record<number, number>;
 }
 
 function formatAllocation(items: PlateAllocation[], multiplier: number) {
@@ -17,10 +17,10 @@ function formatAllocation(items: PlateAllocation[], multiplier: number) {
 export function PlateResults({
   targetWeight,
   barbellWeight,
-  selectedPlates,
+  plateInventory,
 }: Props) {
   const [copied, setCopied] = useState(false);
-  const result = calculatePlates(targetWeight, barbellWeight, selectedPlates);
+  const result = calculatePlates(targetWeight, barbellWeight, plateInventory);
 
   const handleCopyLink = async () => {
     try {

@@ -20,10 +20,10 @@ export default function Home() {
   const {
     targetWeight,
     barbellWeight,
-    selectedPlates,
+    plateInventory,
     setTargetWeight,
     setBarbellWeight,
-    togglePlate,
+    setPlateCount,
     adjustTargetWeight,
   } = useCalculatorState();
 
@@ -48,14 +48,14 @@ export default function Home() {
       />
 
       <PlateInventory
-        selectedPlates={selectedPlates}
-        onToggle={togglePlate}
+        plateInventory={plateInventory}
+        onChange={setPlateCount}
       />
 
       <PlateResults
         targetWeight={targetWeight}
         barbellWeight={barbellWeight}
-        selectedPlates={selectedPlates}
+        plateInventory={plateInventory}
       />
     </div>
   );

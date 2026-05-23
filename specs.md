@@ -22,10 +22,10 @@ A simple, client-side web application designed to help users calculate how to lo
 
 ### 2.2 Plate Inventory Management
 
-- Users can toggle which plates they have available.
+- Users can set how many of each plate they have available via a numeric input with stepper controls (+/–).
 - The app must pre-populate a list of the most common plate sizes:
   - `25 kg`, `20 kg`, `15 kg`, `10 kg`, `5 kg`, `2.5 kg`, `2 kg`, `1.25 kg`, `1 kg`, `0.5 kg`
-- Users toggle each plate to include or exclude it from the calculation.
+- A count of `0` means the plate is unavailable; any count > 0 means it can be used (up to that many per side).
 
 ### 2.3 Target Weight Increments
 
@@ -84,11 +84,11 @@ To allow users to share their current configurations (target weight, barbell wei
 ### 5.1 URL Schema Design
 
 A standard shareable URL will look like this:
-`?target=100&bar=20&plates=25,20,10,5,2.5`
+`?target=100&bar=20&inv=25x2,20x4,10x4,5x4`
 
 - `target`: The target weight to calculate (number).
 - `bar`: The weight of the barbell (number).
-- `plates`: A comma-separated list of active plate weights.
+- `inv`: A comma-separated list of `weightxcount` pairs indicating how many of each plate are available. Only plates with a count > 0 are included, sorted heaviest to lightest.
 
 ### 5.2 Synchronization Flow
 

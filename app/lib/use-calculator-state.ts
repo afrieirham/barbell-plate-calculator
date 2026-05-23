@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { ALL_PLATES, DEFAULT_BAR, DEFAULT_TARGET, STORAGE_KEY } from "./constants";
+import {
+  ALL_PLATES,
+  DEFAULT_BAR,
+  DEFAULT_PLATE_INVENTORY,
+  DEFAULT_TARGET,
+  STORAGE_KEY,
+} from "./constants";
 
 interface StoredState {
   targetWeight: number;
   barbellWeight: number;
-  selectedPlates: number[];
+  plateInventory: Record<number, number>;
 }
 
 function readFromStorage(): Partial<StoredState> {
@@ -16,14 +22,26 @@ function readFromStorage(): Partial<StoredState> {
   return {};
 }
 
-function parsePlatesParam(value: string | null): number[] | null {
+function parseInventoryParam(value: string | null): Record<number, number> | null {
   if (!value) return null;
-  const plates = value
-    .split(",")
-    .map((s) => s.trim())
-    .map(Number)
-    .filter((n) => !isNaN(n) && n > 0);
-  return plates.length > 0 ? plates : null;
+  const entries = value.split(",").map((s) => s.trim());
+  const inventory: Record<number, number> = {};
+  for (const entry of entries) {
+    const [weightStr, countStr] = entry.split("x");
+    const weight = Number(weightStr);
+    const count = Number(countStr);
+    if (!isNaN(weight) && weight > 0 && !isNaN(count) && count >= 0) {
+      inventory[weight] = count;
+    }
+  }
+  return Object.keys(inventory).length > 0 ? inventory : null;
+}
+
+function serializeInventory(inventory: Record<number, number>): string {
+  return ALL_PLATES.filter((w) => (inventory[w] ?? 0) > 0)
+    .sort((a, b) => b - a)
+    .map((w) => `${w}x${inventory[w]}`)
+    .join(",");
 }
 
 function getInitialState(searchParams: URLSearchParams) {
@@ -31,7 +49,7 @@ function getInitialState(searchParams: URLSearchParams) {
 
   const urlTarget = searchParams.get("target");
   const urlBar = searchParams.get("bar");
-  const urlPlates = parsePlatesParam(searchParams.get("plates"));
+  const urlInv = parseInventoryParam(searchParams.get("inv"));
 
   return {
     targetWeight:
@@ -42,7 +60,7 @@ function getInitialState(searchParams: URLSearchParams) {
       urlBar !== null
         ? Math.max(Number(urlBar) || 0, 0)
         : (stored.barbellWeight ?? DEFAULT_BAR),
-    selectedPlates: urlPlates ?? stored.selectedPlates ?? [...ALL_PLATES],
+    plateInventory: urlInv ?? stored.plateInventory ?? { ...DEFAULT_PLATE_INVENTORY },
   };
 }
 
@@ -54,8 +72,8 @@ export function useCalculatorState() {
     const params = new URLSearchParams();
     if (state.targetWeight) params.set("target", String(state.targetWeight));
     if (state.barbellWeight) params.set("bar", String(state.barbellWeight));
-    if (state.selectedPlates.length)
-      params.set("plates", state.selectedPlates.join(","));
+    const inv = serializeInventory(state.plateInventory);
+    if (inv) params.set("inv", inv);
     setSearchParams(params, { replace: true });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state, setSearchParams]);
@@ -82,25 +100,23 @@ export function useCalculatorState() {
     }));
   }, []);
 
-  const togglePlate = useCallback((weight: number) => {
-    setState((prev) => {
-      const exists = prev.selectedPlates.includes(weight);
-      return {
-        ...prev,
-        selectedPlates: exists
-          ? prev.selectedPlates.filter((w) => w !== weight)
-          : [...prev.selectedPlates, weight].sort((a, b) => b - a),
-      };
-    });
+  const setPlateCount = useCallback((weight: number, count: number) => {
+    setState((prev) => ({
+      ...prev,
+      plateInventory: {
+        ...prev.plateInventory,
+        [weight]: Math.max(count, 0),
+      },
+    }));
   }, []);
 
   return {
     targetWeight: state.targetWeight,
     barbellWeight: state.barbellWeight,
-    selectedPlates: state.selectedPlates,
+    plateInventory: state.plateInventory,
     setTargetWeight,
     setBarbellWeight,
-    togglePlate,
+    setPlateCount,
     adjustTargetWeight,
   };
 }
