@@ -10,6 +10,16 @@ export interface CalculationResult {
   shortBy: number;
 }
 
+export function calculateMaxWeight(
+  barbellWeight: number,
+  inventory: Record<number, number>
+): number {
+  const totalPerSide = Object.entries(inventory).reduce((sum, [weight, count]) => {
+    return sum + Number(weight) * Math.floor(count / 2);
+  }, 0);
+  return barbellWeight + totalPerSide * 2;
+}
+
 export function calculatePlates(
   targetWeight: number,
   barbellWeight: number,

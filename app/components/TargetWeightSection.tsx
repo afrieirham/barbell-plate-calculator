@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 interface Props {
   targetWeight: number;
   barbellWeight: number;
+  maxWeight: number;
   onTargetChange: (weight: number) => void;
   onAdjust: (delta: number) => void;
 }
@@ -10,6 +11,7 @@ interface Props {
 export function TargetWeightSection({
   targetWeight,
   barbellWeight,
+  maxWeight,
   onTargetChange,
   onAdjust,
 }: Props) {
@@ -27,6 +29,9 @@ export function TargetWeightSection({
       <p className="text-5xl font-bold text-gray-900 tabular-nums">
         {targetWeight}
         <span className="text-2xl font-normal text-gray-400 ml-1">kg</span>
+      </p>
+      <p className="text-xs text-gray-400 -mt-1">
+        Max weight: {maxWeight} kg
       </p>
       <div className="flex items-center gap-2">
         <button
