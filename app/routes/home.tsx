@@ -21,10 +21,12 @@ export default function Home() {
     targetWeight,
     barbellWeight,
     plateInventory,
+    inventoryOpen,
     setTargetWeight,
     setBarbellWeight,
     setPlateCount,
     adjustTargetWeight,
+    setInventoryOpen,
   } = useCalculatorState();
 
   const maxWeight = calculateMaxWeight(barbellWeight, plateInventory);
@@ -53,12 +55,15 @@ export default function Home() {
       <PlateInventory
         plateInventory={plateInventory}
         onChange={setPlateCount}
+        open={inventoryOpen}
+        onToggle={setInventoryOpen}
       />
 
       <PlateResults
         targetWeight={targetWeight}
         barbellWeight={barbellWeight}
         plateInventory={plateInventory}
+        inventoryOpen={inventoryOpen}
       />
     </div>
   );

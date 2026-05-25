@@ -33,6 +33,7 @@ function getInitialState() {
   const urlTarget = searchParams.get("target");
   const urlBar = searchParams.get("bar");
   const urlInv = parseInventoryParam(searchParams.get("inv"));
+  const urlInvOpen = searchParams.get("invOpen");
 
   return {
     targetWeight:
@@ -44,6 +45,7 @@ function getInitialState() {
         ? Math.max(Number(urlBar) || 0, 0)
         : DEFAULT_BAR,
     plateInventory: urlInv ?? { ...DEFAULT_PLATE_INVENTORY },
+    inventoryOpen: urlInvOpen === "true",
   };
 }
 
@@ -82,14 +84,20 @@ export function useCalculatorState() {
     }));
   }, []);
 
+  const setInventoryOpen = useCallback((open: boolean) => {
+    setState((prev) => ({ ...prev, inventoryOpen: open }));
+  }, []);
+
   return {
     targetWeight: state.targetWeight,
     barbellWeight: state.barbellWeight,
     plateInventory: state.plateInventory,
+    inventoryOpen: state.inventoryOpen,
     setTargetWeight,
     setBarbellWeight,
     setPlateCount,
     adjustTargetWeight,
+    setInventoryOpen,
   };
 }
 
@@ -97,12 +105,14 @@ export function buildShareUrl(state: {
   targetWeight: number;
   barbellWeight: number;
   plateInventory: Record<number, number>;
+  inventoryOpen?: boolean;
 }) {
   const params = new URLSearchParams();
   if (state.targetWeight) params.set("target", String(state.targetWeight));
   if (state.barbellWeight) params.set("bar", String(state.barbellWeight));
   const inv = serializeInventory(state.plateInventory);
   if (inv) params.set("inv", inv);
+  if (state.inventoryOpen) params.set("invOpen", "true");
   const qs = params.toString();
   return `${window.location.origin}${window.location.pathname}${qs ? `?${qs}` : ""}`;
 }

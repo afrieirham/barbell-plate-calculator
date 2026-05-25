@@ -6,6 +6,7 @@ interface Props {
   targetWeight: number;
   barbellWeight: number;
   plateInventory: Record<number, number>;
+  inventoryOpen?: boolean;
 }
 
 function formatAllocation(items: PlateAllocation[], multiplier: number) {
@@ -19,6 +20,7 @@ export function PlateResults({
   targetWeight,
   barbellWeight,
   plateInventory,
+  inventoryOpen,
 }: Props) {
   const [copied, setCopied] = useState(false);
   const result = calculatePlates(targetWeight, barbellWeight, plateInventory);
@@ -29,6 +31,7 @@ export function PlateResults({
         targetWeight,
         barbellWeight,
         plateInventory,
+        inventoryOpen,
       });
       window.history.replaceState(null, "", url);
       await navigator.clipboard.writeText(url);

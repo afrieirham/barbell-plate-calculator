@@ -4,6 +4,8 @@ import { ALL_PLATES } from "../lib/constants";
 interface Props {
   plateInventory: Record<number, number>;
   onChange: (weight: number, count: number) => void;
+  open: boolean;
+  onToggle: (open: boolean) => void;
 }
 
 function PlateCountInput({
@@ -39,57 +41,78 @@ function PlateCountInput({
   );
 }
 
-export function PlateInventory({ plateInventory, onChange }: Props) {
+export function PlateInventory({ plateInventory, onChange, open, onToggle }: Props) {
   return (
-    <section className="space-y-3">
-      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+    <div className="space-y-3">
+      <button
+        type="button"
+        onClick={() => onToggle(!open)}
+        className="text-xs font-semibold text-gray-400 uppercase tracking-widest cursor-pointer flex items-center gap-2 select-none w-full text-left"
+      >
         Available Plates (each)
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 max-w-sm md:max-w-none">
-        {ALL_PLATES.map((weight) => {
-          const count = plateInventory[weight] ?? 0;
-          const active = count > 0;
-          return (
-            <div
-              key={weight}
-              className={`flex items-center gap-3 py-2 px-3 rounded-xl border-2 transition-all ${
-                active
-                  ? "bg-indigo-50 border-indigo-400"
-                  : "bg-gray-50 border-gray-100"
-              }`}
-            >
-              <span
-                className={`text-sm font-semibold w-12 text-right ${
-                  active ? "text-indigo-700" : "text-gray-400"
+        <svg
+          className="w-3.5 h-3.5 ml-auto transition-transform duration-200"
+          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      <div
+        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+        style={{ maxHeight: open ? "600px" : "0" }}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 max-w-sm md:max-w-none">
+          {ALL_PLATES.map((weight) => {
+            const count = plateInventory[weight] ?? 0;
+            const active = count > 0;
+            return (
+              <div
+                key={weight}
+                className={`flex items-center gap-3 py-2 px-3 rounded-xl border-2 transition-all ${
+                  active
+                    ? "bg-indigo-50 border-indigo-400"
+                    : "bg-gray-50 border-gray-100"
                 }`}
               >
-                {weight}
-                <span className="text-[10px] font-normal ml-0.5">kg</span>
-              </span>
-              <div className="flex items-center gap-1.5 ml-auto">
-                <button
-                  onClick={() => onChange(weight, count - 1)}
-                  disabled={count === 0}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed leading-none"
+                <span
+                  className={`text-sm font-semibold w-12 text-right ${
+                    active ? "text-indigo-700" : "text-gray-400"
+                  }`}
                 >
-                  –
-                </button>
-                <PlateCountInput
-                  weight={weight}
-                  count={count}
-                  onChange={onChange}
-                />
-                <button
-                  onClick={() => onChange(weight, count + 1)}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors leading-none"
-                >
-                  +
-                </button>
+                  {weight}
+                  <span className="text-[10px] font-normal ml-0.5">kg</span>
+                </span>
+                <div className="flex items-center gap-1.5 ml-auto">
+                  <button
+                    onClick={() => onChange(weight, count - 1)}
+                    disabled={count === 0}
+                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed leading-none"
+                  >
+                    –
+                  </button>
+                  <PlateCountInput
+                    weight={weight}
+                    count={count}
+                    onChange={onChange}
+                  />
+                  <button
+                    onClick={() => onChange(weight, count + 1)}
+                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors leading-none"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
