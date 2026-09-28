@@ -1,6 +1,9 @@
 import type { Route } from "./+types/home";
 import { useCalculatorState } from "../lib/use-calculator-state";
-import { calculateMaxWeight } from "../lib/calculate-plates";
+import {
+  calculateMaxWeight,
+  calculateMinIncrement,
+} from "../lib/calculate-plates";
 import { TargetWeightSection } from "../components/TargetWeightSection";
 import { BarbellConfigSection } from "../components/BarbellConfigSection";
 import { PlateInventory } from "../components/PlateInventory";
@@ -30,6 +33,7 @@ export default function Home() {
   } = useCalculatorState();
 
   const maxWeight = calculateMaxWeight(barbellWeight, plateInventory);
+  const increment = calculateMinIncrement(plateInventory);
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10 space-y-6">
@@ -43,6 +47,7 @@ export default function Home() {
         targetWeight={targetWeight}
         barbellWeight={barbellWeight}
         maxWeight={maxWeight}
+        increment={increment}
         onTargetChange={setTargetWeight}
         onAdjust={adjustTargetWeight}
       />

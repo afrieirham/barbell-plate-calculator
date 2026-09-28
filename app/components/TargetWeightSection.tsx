@@ -4,6 +4,7 @@ interface Props {
   targetWeight: number;
   barbellWeight: number;
   maxWeight: number;
+  increment: number;
   onTargetChange: (weight: number) => void;
   onAdjust: (delta: number) => void;
 }
@@ -12,6 +13,7 @@ export function TargetWeightSection({
   targetWeight,
   barbellWeight,
   maxWeight,
+  increment,
   onTargetChange,
   onAdjust,
 }: Props) {
@@ -20,6 +22,8 @@ export function TargetWeightSection({
   useEffect(() => {
     setValue(String(targetWeight));
   }, [targetWeight]);
+
+  const incrementLabel = Number(increment.toFixed(2));
 
   return (
     <section className="space-y-3">
@@ -35,11 +39,11 @@ export function TargetWeightSection({
       </p>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onAdjust(-2.5)}
-          disabled={targetWeight - 2.5 < barbellWeight}
+          onClick={() => onAdjust(-increment)}
+          disabled={targetWeight - increment < barbellWeight}
           className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          – 2.5 kg
+          – {incrementLabel} kg
         </button>
         <input
           type="number"
@@ -56,10 +60,10 @@ export function TargetWeightSection({
           step={0.5}
         />
         <button
-          onClick={() => onAdjust(2.5)}
+          onClick={() => onAdjust(increment)}
           className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
         >
-          + 2.5 kg
+          + {incrementLabel} kg
         </button>
       </div>
       {targetWeight === barbellWeight && (

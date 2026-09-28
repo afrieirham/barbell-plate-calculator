@@ -23,6 +23,22 @@ export function calculateMaxWeight(
   return barbellWeight + totalPerSide * 2;
 }
 
+/**
+ * The smallest total-weight change possible with the available plates.
+ * Plates load symmetrically, so a step adds/removes one plate per side:
+ * 2 x the lightest available plate.
+ */
+export function calculateMinIncrement(
+  inventory: Record<number, number>,
+  fallback = 2.5
+): number {
+  const available = Object.entries(inventory)
+    .filter(([, count]) => Math.floor(count) > 0)
+    .map(([weight]) => Number(weight));
+  if (available.length === 0) return fallback;
+  return Math.min(...available) * 2;
+}
+
 export function calculatePlates(
   targetWeight: number,
   barbellWeight: number,
