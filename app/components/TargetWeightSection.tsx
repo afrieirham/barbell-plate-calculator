@@ -25,6 +25,9 @@ export function TargetWeightSection({
 
   const formatWeight = (weight: number) => Number(weight.toFixed(2));
 
+  const prevDelta = prevWeight !== null ? formatWeight(targetWeight - prevWeight) : null;
+  const nextDelta = nextWeight !== null ? formatWeight(nextWeight - targetWeight) : null;
+
   return (
     <section className="space-y-3">
       <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
@@ -43,7 +46,7 @@ export function TargetWeightSection({
           disabled={prevWeight === null}
           className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          {prevWeight !== null ? `– ${formatWeight(prevWeight)} kg` : "–"}
+          {prevDelta !== null ? `– ${prevDelta} kg` : "–"}
         </button>
         <input
           type="number"
@@ -64,7 +67,7 @@ export function TargetWeightSection({
           disabled={nextWeight === null}
           className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          {nextWeight !== null ? `+ ${formatWeight(nextWeight)} kg` : "+"}
+          {nextDelta !== null ? `+ ${nextDelta} kg` : "+"}
         </button>
       </div>
       {targetWeight === barbellWeight && (
