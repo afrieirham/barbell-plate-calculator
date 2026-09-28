@@ -4,18 +4,18 @@ interface Props {
   targetWeight: number;
   barbellWeight: number;
   maxWeight: number;
-  increment: number;
+  prevWeight: number | null;
+  nextWeight: number | null;
   onTargetChange: (weight: number) => void;
-  onAdjust: (delta: number) => void;
 }
 
 export function TargetWeightSection({
   targetWeight,
   barbellWeight,
   maxWeight,
-  increment,
+  prevWeight,
+  nextWeight,
   onTargetChange,
-  onAdjust,
 }: Props) {
   const [value, setValue] = useState(String(targetWeight));
 
@@ -23,7 +23,7 @@ export function TargetWeightSection({
     setValue(String(targetWeight));
   }, [targetWeight]);
 
-  const incrementLabel = Number(increment.toFixed(2));
+  const formatWeight = (weight: number) => Number(weight.toFixed(2));
 
   return (
     <section className="space-y-3">
@@ -39,11 +39,11 @@ export function TargetWeightSection({
       </p>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onAdjust(-increment)}
-          disabled={targetWeight - increment < barbellWeight}
+          onClick={() => prevWeight !== null && onTargetChange(prevWeight)}
+          disabled={prevWeight === null}
           className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          – {incrementLabel} kg
+          {prevWeight !== null ? `– ${formatWeight(prevWeight)} kg` : "–"}
         </button>
         <input
           type="number"
@@ -60,10 +60,11 @@ export function TargetWeightSection({
           step={0.5}
         />
         <button
-          onClick={() => onAdjust(increment)}
-          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+          onClick={() => nextWeight !== null && onTargetChange(nextWeight)}
+          disabled={nextWeight === null}
+          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          + {incrementLabel} kg
+          {nextWeight !== null ? `+ ${formatWeight(nextWeight)} kg` : "+"}
         </button>
       </div>
       {targetWeight === barbellWeight && (

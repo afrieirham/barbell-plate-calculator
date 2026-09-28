@@ -24,19 +24,41 @@ export function calculateMaxWeight(
 }
 
 /**
- * The smallest total-weight change possible with the available plates.
- * Plates load symmetrically, so a step adds/removes one plate per side:
- * 2 x the lightest available plate.
+ * Every total weight that can be loaded with the available plates, ascending.
+ * Plates load symmetrically, so each per-side sum maps to `bar + 2 * sum`.
  */
-export function calculateMinIncrement(
-  inventory: Record<number, number>,
-  fallback = 2.5
-): number {
-  const available = Object.entries(inventory)
-    .filter(([, count]) => Math.floor(count) > 0)
-    .map(([weight]) => Number(weight));
-  if (available.length === 0) return fallback;
-  return Math.min(...available) * 2;
+export function calculateLoadableWeights(
+  barbellWeight: number,
+  inventory: Record<number, number>
+): number[] {
+  const plates = Object.entries(inventory)
+    .map(([weight, count]) => ({
+      grams: Math.round(Number(weight) * 1000),
+      count: Math.floor(count),
+    }))
+    .filter((p) => p.count > 0 && p.grams > 0);
+
+  const barG = Math.round(barbellWeight * 1000);
+  const totalG = plates.reduce((sum, p) => sum + p.grams * p.count, 0);
+
+  const reachable = new Uint8Array(totalG + 1);
+  reachable[0] = 1;
+
+  for (const { grams, count } of plates) {
+    const used = new Int32Array(totalG + 1);
+    for (let s = grams; s <= totalG; s++) {
+      if (reachable[s] || !reachable[s - grams]) continue;
+      if (used[s - grams] >= count) continue;
+      reachable[s] = 1;
+      used[s] = used[s - grams] + 1;
+    }
+  }
+
+  const weights: number[] = [];
+  for (let s = 0; s <= totalG; s++) {
+    if (reachable[s]) weights.push((barG + s * 2) / 1000);
+  }
+  return weights;
 }
 
 export function calculatePlates(
