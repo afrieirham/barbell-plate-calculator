@@ -49,7 +49,7 @@ export function PlateInventory({ plateInventory, onChange, open, onToggle }: Pro
         onClick={() => onToggle(!open)}
         className="text-xs font-semibold text-gray-400 uppercase tracking-widest cursor-pointer flex items-center gap-2 select-none w-full text-left"
       >
-        Available Plates (each)
+        Available Plates (pairs)
         <svg
           className="w-3.5 h-3.5 ml-auto transition-transform duration-200"
           style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
