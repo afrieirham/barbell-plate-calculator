@@ -10,12 +10,15 @@ export interface CalculationResult {
   shortBy: number;
 }
 
+/**
+ * The inventory counts are expressed in pairs (one pair = one plate per side).
+ */
 export function calculateMaxWeight(
   barbellWeight: number,
   inventory: Record<number, number>
 ): number {
   const totalPerSide = Object.entries(inventory).reduce((sum, [weight, count]) => {
-    return sum + Number(weight) * Math.floor(count / 2);
+    return sum + Number(weight) * Math.floor(count);
   }, 0);
   return barbellWeight + totalPerSide * 2;
 }
@@ -28,7 +31,7 @@ export function calculatePlates(
   if (targetWeight <= barbellWeight) return null;
 
   const plates = Object.entries(inventory)
-    .map(([weight, count]) => ({ weight: Number(weight), count: Math.floor(count / 2) }))
+    .map(([weight, count]) => ({ weight: Number(weight), count: Math.floor(count) }))
     .filter((p) => p.count > 0)
     .sort((a, b) => b.weight - a.weight);
 
