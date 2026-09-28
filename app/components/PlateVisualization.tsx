@@ -30,10 +30,10 @@ const PLATE_STYLE: Record<
   10: { fill: "#16a34a", text: "#ffffff" },
   5: { fill: "#f9fafb", text: "#374151", stroke: "#d1d5db" },
   2.5: { fill: "#ef4444", text: "#ffffff" },
-  2: { fill: "#9ca3af", text: "#ffffff" },
-  1.25: { fill: "#9ca3af", text: "#ffffff" },
-  1: { fill: "#9ca3af", text: "#ffffff" },
-  0.5: { fill: "#9ca3af", text: "#ffffff" },
+  2: { fill: "#6b7280", text: "#ffffff" },
+  1.25: { fill: "#6b7280", text: "#ffffff" },
+  1: { fill: "#6b7280", text: "#ffffff" },
+  0.5: { fill: "#6b7280", text: "#ffffff" },
 };
 
 const FALLBACK_STYLE = { fill: "#6b7280", text: "#ffffff" };
