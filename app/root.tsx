@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -11,6 +12,9 @@ import type { Route } from "./+types/root";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "manifest", href: "/manifest.webmanifest" },
+  { rel: "icon", type: "image/png", href: "/icons/icon-192.png" },
+  { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -32,6 +36,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         />
+        <meta name="theme-color" content="#4f46e5" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="barbell" />
         <Meta />
         <Links />
         <script
@@ -68,6 +77,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <ServiceWorker />
       </body>
     </html>
   );
@@ -75,6 +85,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+function ServiceWorker() {
+  useEffect(() => {
+    if (!import.meta.env.PROD || !("serviceWorker" in navigator)) return;
+
+    const register = () => {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    };
+
+    if (document.readyState === "complete") {
+      register();
+      return;
+    }
+
+    window.addEventListener("load", register, { once: true });
+    return () => window.removeEventListener("load", register);
+  }, []);
+
+  return null;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
