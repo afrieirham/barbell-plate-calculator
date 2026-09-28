@@ -67,13 +67,6 @@ export function useCalculatorState() {
     }));
   }, []);
 
-  const adjustTargetWeight = useCallback((delta: number) => {
-    setState((prev) => ({
-      ...prev,
-      targetWeight: Math.max(prev.targetWeight + delta, prev.barbellWeight),
-    }));
-  }, []);
-
   const setPlateCount = useCallback((weight: number, count: number) => {
     setState((prev) => ({
       ...prev,
@@ -96,7 +89,6 @@ export function useCalculatorState() {
     setTargetWeight,
     setBarbellWeight,
     setPlateCount,
-    adjustTargetWeight,
     setInventoryOpen,
   };
 }

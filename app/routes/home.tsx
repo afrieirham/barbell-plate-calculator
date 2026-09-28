@@ -1,6 +1,10 @@
+import { useMemo } from "react";
 import type { Route } from "./+types/home";
 import { useCalculatorState } from "../lib/use-calculator-state";
-import { calculateMaxWeight } from "../lib/calculate-plates";
+import {
+  calculateMaxWeight,
+  calculateLoadableWeights,
+} from "../lib/calculate-plates";
 import { TargetWeightSection } from "../components/TargetWeightSection";
 import { BarbellConfigSection } from "../components/BarbellConfigSection";
 import { PlateInventory } from "../components/PlateInventory";
@@ -25,11 +29,22 @@ export default function Home() {
     setTargetWeight,
     setBarbellWeight,
     setPlateCount,
-    adjustTargetWeight,
     setInventoryOpen,
   } = useCalculatorState();
 
   const maxWeight = calculateMaxWeight(barbellWeight, plateInventory);
+
+  const loadableWeights = useMemo(
+    () => calculateLoadableWeights(barbellWeight, plateInventory),
+    [barbellWeight, plateInventory]
+  );
+
+  const targetG = Math.round(targetWeight * 1000);
+  const nextWeight =
+    loadableWeights.find((w) => Math.round(w * 1000) > targetG) ?? null;
+  const prevWeight =
+    [...loadableWeights].reverse().find((w) => Math.round(w * 1000) < targetG) ??
+    null;
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10 space-y-6">
@@ -43,8 +58,9 @@ export default function Home() {
         targetWeight={targetWeight}
         barbellWeight={barbellWeight}
         maxWeight={maxWeight}
+        prevWeight={prevWeight}
+        nextWeight={nextWeight}
         onTargetChange={setTargetWeight}
-        onAdjust={adjustTargetWeight}
       />
 
       <BarbellConfigSection

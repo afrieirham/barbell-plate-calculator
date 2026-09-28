@@ -4,22 +4,29 @@ interface Props {
   targetWeight: number;
   barbellWeight: number;
   maxWeight: number;
+  prevWeight: number | null;
+  nextWeight: number | null;
   onTargetChange: (weight: number) => void;
-  onAdjust: (delta: number) => void;
 }
 
 export function TargetWeightSection({
   targetWeight,
   barbellWeight,
   maxWeight,
+  prevWeight,
+  nextWeight,
   onTargetChange,
-  onAdjust,
 }: Props) {
   const [value, setValue] = useState(String(targetWeight));
 
   useEffect(() => {
     setValue(String(targetWeight));
   }, [targetWeight]);
+
+  const formatWeight = (weight: number) => Number(weight.toFixed(2));
+
+  const prevDelta = prevWeight !== null ? formatWeight(targetWeight - prevWeight) : null;
+  const nextDelta = nextWeight !== null ? formatWeight(nextWeight - targetWeight) : null;
 
   return (
     <section className="space-y-3">
@@ -35,11 +42,11 @@ export function TargetWeightSection({
       </p>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => onAdjust(-2.5)}
-          disabled={targetWeight - 2.5 < barbellWeight}
+          onClick={() => prevWeight !== null && onTargetChange(prevWeight)}
+          disabled={prevWeight === null}
           className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          – 2.5 kg
+          {prevDelta !== null ? `– ${prevDelta} kg` : "–"}
         </button>
         <input
           type="number"
@@ -56,10 +63,11 @@ export function TargetWeightSection({
           step={0.5}
         />
         <button
-          onClick={() => onAdjust(2.5)}
-          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+          onClick={() => nextWeight !== null && onTargetChange(nextWeight)}
+          disabled={nextWeight === null}
+          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          + 2.5 kg
+          {nextDelta !== null ? `+ ${nextDelta} kg` : "+"}
         </button>
       </div>
       {targetWeight === barbellWeight && (
