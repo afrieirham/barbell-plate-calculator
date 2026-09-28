@@ -55,29 +55,55 @@ export function calculatePlates(
 
   const targetG = Math.round(targetWeight * 1000);
   const barG = Math.round(barbellWeight * 1000);
+  const perSideG = Math.floor((targetG - barG) / 2);
 
-  let remainingG = (targetG - barG) / 2;
-  const originalG = remainingG;
+  const grams = plates.map((p) => Math.round(p.weight * 1000));
+  const counts = plates.map((p) => p.count);
+  const totalG = grams.reduce((sum, g, i) => sum + g * counts[i], 0);
+  const limit = Math.min(perSideG, totalG);
+
+  const width = limit + 1;
+  const memo = new Uint8Array(plates.length * width);
+  const choice = new Int16Array(plates.length * width).fill(-1);
+
+  const canReach = (index: number, amount: number): boolean => {
+    if (amount === 0) return true;
+    if (index >= plates.length || amount < 0) return false;
+    const key = index * width + amount;
+    if (memo[key] !== 0) return memo[key] === 1;
+    const plateG = grams[index];
+    const maxK = Math.min(counts[index], Math.floor(amount / plateG));
+    let reachable = false;
+    for (let k = maxK; k >= 0; k--) {
+      if (canReach(index + 1, amount - k * plateG)) {
+        choice[key] = k;
+        reachable = true;
+        break;
+      }
+    }
+    memo[key] = reachable ? 1 : 2;
+    return reachable;
+  };
+
+  let bestG = limit;
+  while (bestG > 0 && !canReach(0, bestG)) bestG--;
+
   const perSide: PlateAllocation[] = [];
-
-  for (const { weight, count: available } of plates) {
-    if (remainingG <= 0) break;
-    const plateG = Math.round(weight * 1000);
-    const maxFit = Math.floor(remainingG / plateG);
-    const count = Math.min(maxFit, available);
+  let remainingG = bestG;
+  for (let i = 0; i < plates.length && remainingG > 0; i++) {
+    const count = choice[i * width + remainingG];
     if (count > 0) {
-      perSide.push({ weight, countPerSide: count });
-      remainingG -= count * plateG;
+      perSide.push({ weight: plates[i].weight, countPerSide: count });
+      remainingG -= count * grams[i];
     }
   }
 
-  const usedG = originalG - remainingG;
-  const totalWeightAchieved = (barG + usedG * 2) / 1000;
+  const totalWeightAchieved = (barG + bestG * 2) / 1000;
 
   return {
     perSide,
     totalWeightAchieved,
-    exact: remainingG === 0,
-    shortBy: remainingG / 1000,
+    exact: bestG === perSideG,
+    shortBy: (perSideG - bestG) / 1000,
   };
 }
