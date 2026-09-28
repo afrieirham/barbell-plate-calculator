@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { calculatePlates, type PlateAllocation } from "../lib/calculate-plates";
 import { buildShareUrl } from "../lib/use-calculator-state";
+import { PlateVisualization } from "./PlateVisualization";
 
 interface Props {
   targetWeight: number;
@@ -78,12 +79,10 @@ export function PlateResults({
 
       <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
         <div>
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
-            Load on each side
+          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-2">
+            Per side
           </p>
-          <p className="text-lg font-semibold text-gray-900">
-            {formatAllocation(result.perSide, 1)}
-          </p>
+          <PlateVisualization allocations={result.perSide} />
         </div>
 
         <div className="border-t border-gray-100 pt-4">
