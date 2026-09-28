@@ -1,20 +1,11 @@
-import { deflateSync } from "node:zlib";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { deflateSync, inflateSync } from "node:zlib";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "icons");
-const SS = 4;
-
-const COLOR = {
-  background: [79, 70, 229],
-  bar: [241, 245, 249],
-  plates: [
-    [220, 38, 38],
-    [37, 99, 235],
-    [250, 204, 21],
-  ],
-};
+const HERE = dirname(fileURLToPath(import.meta.url));
+const SOURCE = join(HERE, "barbell.png");
+const OUT_DIR = join(HERE, "..", "public", "icons");
 
 function crc32(buf) {
   let c = ~0;
@@ -56,119 +47,125 @@ function encodePng(width, height, rgba) {
   ]);
 }
 
-function roundedRectSdf(px, py, cx, cy, halfW, halfH, radius) {
-  const dx = Math.abs(px - cx) - (halfW - radius);
-  const dy = Math.abs(py - cy) - (halfH - radius);
-  const ax = Math.max(dx, 0);
-  const ay = Math.max(dy, 0);
-  return Math.hypot(ax, ay) + Math.min(Math.max(dx, dy), 0) - radius;
+function paeth(a, b, c) {
+  const p = a + b - c;
+  const pa = Math.abs(p - a);
+  const pb = Math.abs(p - b);
+  const pc = Math.abs(p - c);
+  if (pa <= pb && pa <= pc) return a;
+  return pb <= pc ? b : c;
 }
 
-function coverage(sdf) {
-  return Math.min(Math.max(0.5 - sdf, 0), 1);
-}
-
-function blend(buffer, index, color, alpha) {
-  if (alpha <= 0) return;
-  const a = Math.min(alpha, 1);
-  for (let c = 0; c < 3; c++) {
-    buffer[index + c] = Math.round(buffer[index + c] * (1 - a) + color[c] * a);
+function decodePng(buf) {
+  const width = buf.readUInt32BE(16);
+  const height = buf.readUInt32BE(20);
+  const bitDepth = buf[24];
+  const colorType = buf[25];
+  if (bitDepth !== 8 || (colorType !== 6 && colorType !== 2)) {
+    throw new Error(`Unsupported PNG: bitDepth=${bitDepth} colorType=${colorType}`);
   }
-  buffer[index + 3] = Math.round(buffer[index + 3] * (1 - a) + 255 * a);
-}
 
-function paint(buffer, size, sdf, color) {
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const a = coverage(sdf(x + 0.5, y + 0.5));
-      if (a > 0) blend(buffer, (y * size + x) * 4, color, a);
-    }
+  const channels = colorType === 6 ? 4 : 3;
+  const idat = [];
+  for (let p = 8; p < buf.length; ) {
+    const len = buf.readUInt32BE(p);
+    const type = buf.toString("ascii", p + 4, p + 8);
+    if (type === "IDAT") idat.push(buf.subarray(p + 8, p + 8 + len));
+    p += 12 + len;
   }
-}
 
-function renderIcon(size, { maskable }) {
-  const big = size * SS;
-  const buffer = Buffer.alloc(big * big * 4);
-  const s = big;
-  const round = maskable ? 0 : 0.225 * s;
-
-  paint(
-    buffer,
-    big,
-    (x, y) => roundedRectSdf(x, y, s / 2, s / 2, s / 2, s / 2, round),
-    COLOR.background,
-  );
-
-  const spread = maskable ? 0.35 : 0.42;
-  const barHalf = spread * s;
-  const barThick = 0.032 * s;
-  paint(
-    buffer,
-    big,
-    (x, y) => roundedRectSdf(x, y, s / 2, s / 2, barHalf, barThick, barThick),
-    COLOR.bar,
-  );
-
-  const plateWidth = 0.052 * s;
-  const radius = 0.016 * s;
-  const inner = spread - 0.1 * s;
-  const step = plateWidth * 1.8;
-  const heights = [0.31, 0.24, 0.17];
-
-  for (let side = 0; side < 2; side++) {
-    const dir = side === 0 ? -1 : 1;
-    for (let i = 0; i < heights.length; i++) {
-      const cx = s / 2 + dir * (inner - i * step);
-      const halfH = heights[i] * s;
-      const color = COLOR.plates[i];
-      paint(
-        buffer,
-        big,
-        (x, y) => roundedRectSdf(x, y, cx, s / 2, plateWidth, halfH, radius),
-        color,
-      );
+  const raw = inflateSync(Buffer.concat(idat));
+  const stride = width * channels;
+  const pixels = Buffer.alloc(height * stride);
+  for (let y = 0; y < height; y++) {
+    const filter = raw[y * (stride + 1)];
+    const row = raw.subarray(y * (stride + 1) + 1, y * (stride + 1) + 1 + stride);
+    const prev = y > 0 ? pixels.subarray((y - 1) * stride, y * stride) : null;
+    for (let x = 0; x < stride; x++) {
+      const a = x >= channels ? pixels[y * stride + x - channels] : 0;
+      const b = prev ? prev[x] : 0;
+      const c = prev && x >= channels ? prev[x - channels] : 0;
+      let value = row[x];
+      if (filter === 1) value += a;
+      else if (filter === 2) value += b;
+      else if (filter === 3) value += (a + b) >> 1;
+      else if (filter === 4) value += paeth(a, b, c);
+      pixels[y * stride + x] = value & 255;
     }
   }
 
+  const rgba = Buffer.alloc(width * height * 4);
+  for (let i = 0; i < width * height; i++) {
+    rgba[i * 4] = pixels[i * channels];
+    rgba[i * 4 + 1] = pixels[i * channels + 1];
+    rgba[i * 4 + 2] = pixels[i * channels + 2];
+    rgba[i * 4 + 3] = channels === 4 ? pixels[i * channels + 3] : 255;
+  }
+
+  return { width, height, data: rgba };
+}
+
+function resize(src, size) {
   const out = Buffer.alloc(size * size * 4);
+  const scaleX = src.width / size;
+  const scaleY = src.height / size;
+
   for (let y = 0; y < size; y++) {
+    const sy0 = y * scaleY;
+    const sy1 = (y + 1) * scaleY;
+    const yStart = Math.floor(sy0);
+    const yEnd = Math.min(Math.ceil(sy1), src.height);
     for (let x = 0; x < size; x++) {
+      const sx0 = x * scaleX;
+      const sx1 = (x + 1) * scaleX;
+      const xStart = Math.floor(sx0);
+      const xEnd = Math.min(Math.ceil(sx1), src.width);
+
       let r = 0;
       let g = 0;
       let b = 0;
       let a = 0;
-      for (let sy = 0; sy < SS; sy++) {
-        for (let sx = 0; sx < SS; sx++) {
-          const idx = ((y * SS + sy) * big + (x * SS + sx)) * 4;
-          r += buffer[idx];
-          g += buffer[idx + 1];
-          b += buffer[idx + 2];
-          a += buffer[idx + 3];
+      let weight = 0;
+
+      for (let sy = yStart; sy < yEnd; sy++) {
+        const wy = Math.min(sy + 1, sy1) - Math.max(sy, sy0);
+        if (wy <= 0) continue;
+        for (let sx = xStart; sx < xEnd; sx++) {
+          const wx = Math.min(sx + 1, sx1) - Math.max(sx, sx0);
+          if (wx <= 0) continue;
+          const w = wx * wy;
+          const i = (sy * src.width + sx) * 4;
+          r += src.data[i] * w;
+          g += src.data[i + 1] * w;
+          b += src.data[i + 2] * w;
+          a += src.data[i + 3] * w;
+          weight += w;
         }
       }
-      const n = SS * SS;
-      const idx = (y * size + x) * 4;
-      out[idx] = Math.round(r / n);
-      out[idx + 1] = Math.round(g / n);
-      out[idx + 2] = Math.round(b / n);
-      out[idx + 3] = Math.round(a / n);
+
+      const o = (y * size + x) * 4;
+      out[o] = Math.round(r / weight);
+      out[o + 1] = Math.round(g / weight);
+      out[o + 2] = Math.round(b / weight);
+      out[o + 3] = Math.round(a / weight);
     }
   }
 
-  return encodePng(size, size, out);
+  return out;
 }
 
 mkdirSync(OUT_DIR, { recursive: true });
 
+const source = decodePng(readFileSync(SOURCE));
 const targets = [
-  ["icon-192.png", 192, false],
-  ["icon-512.png", 512, false],
-  ["icon-maskable-192.png", 192, true],
-  ["icon-maskable-512.png", 512, true],
-  ["apple-touch-icon.png", 180, false],
+  ["icon-192.png", 192],
+  ["icon-512.png", 512],
+  ["icon-maskable-192.png", 192],
+  ["icon-maskable-512.png", 512],
+  ["apple-touch-icon.png", 180],
 ];
 
-for (const [name, size, maskable] of targets) {
-  writeFileSync(join(OUT_DIR, name), renderIcon(size, { maskable }));
+for (const [name, size] of targets) {
+  writeFileSync(join(OUT_DIR, name), encodePng(size, size, resize(source, size)));
   console.log(`wrote public/icons/${name}`);
 }

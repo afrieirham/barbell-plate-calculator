@@ -1,6 +1,6 @@
 {
-  "name": "Barbell Plate Calculator",
-  "short_name": "Plate Calc",
+  "name": "barbell",
+  "short_name": "barbell",
   "description": "Calculate how to load a barbell to reach your target weight.",
   "start_url": "/",
   "scope": "/",
