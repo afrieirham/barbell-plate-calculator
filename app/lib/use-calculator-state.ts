@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
 import {
   ALL_PLATES,
-  DEFAULT_BAR,
-  DEFAULT_PLATE_INVENTORY,
-  DEFAULT_TARGET,
+  HOME_DEFAULTS,
+  type CalculatorDefaults,
 } from "./constants";
 
 function parseInventoryParam(value: string | null): Record<number, number> | null {
@@ -28,7 +27,7 @@ function serializeInventory(inventory: Record<number, number>): string {
     .join(",");
 }
 
-function getInitialState() {
+function getInitialState(defaults: CalculatorDefaults) {
   const searchParams = new URLSearchParams(window.location.search);
   const urlTarget = searchParams.get("target");
   const urlBar = searchParams.get("bar");
@@ -39,18 +38,20 @@ function getInitialState() {
     targetWeight:
       urlTarget !== null
         ? Math.max(Number(urlTarget) || 0, 1)
-        : DEFAULT_TARGET,
+        : defaults.targetWeight,
     barbellWeight:
       urlBar !== null
         ? Math.max(Number(urlBar) || 0, 0)
-        : DEFAULT_BAR,
-    plateInventory: urlInv ?? { ...DEFAULT_PLATE_INVENTORY },
+        : defaults.barbellWeight,
+    plateInventory: urlInv ?? { ...defaults.plateInventory },
     inventoryOpen: urlInvOpen === "true",
   };
 }
 
-export function useCalculatorState() {
-  const [state, setState] = useState(getInitialState);
+export function useCalculatorState(
+  defaults: CalculatorDefaults = HOME_DEFAULTS,
+) {
+  const [state, setState] = useState(() => getInitialState(defaults));
 
   const setTargetWeight = useCallback((weight: number) => {
     setState((prev) => ({

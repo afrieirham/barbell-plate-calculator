@@ -2,6 +2,8 @@ const CACHE = "barbell-plate-calculator-v1";
 const APP_SHELL = [
   "/",
   "/manifest.webmanifest",
+  "/manifest-10kg.webmanifest",
+  "/manifest-2kg.webmanifest",
   "/favicon.ico",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
