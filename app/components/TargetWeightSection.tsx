@@ -44,7 +44,7 @@ export function TargetWeightSection({
         <button
           onClick={() => prevWeight !== null && onTargetChange(prevWeight)}
           disabled={prevWeight === null}
-          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-24 shrink-0 whitespace-nowrap px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium tabular-nums text-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           {prevDelta !== null ? `– ${prevDelta} kg` : "–"}
         </button>
@@ -65,7 +65,7 @@ export function TargetWeightSection({
         <button
           onClick={() => nextWeight !== null && onTargetChange(nextWeight)}
           disabled={nextWeight === null}
-          className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-24 shrink-0 whitespace-nowrap px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium tabular-nums text-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           {nextDelta !== null ? `+ ${nextDelta} kg` : "+"}
         </button>
