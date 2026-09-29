@@ -5,8 +5,7 @@ import {
   calculateLoadableWeights,
 } from "../lib/calculate-plates";
 import { TargetWeightSection } from "./TargetWeightSection";
-import { BarbellConfigSection } from "./BarbellConfigSection";
-import { PlateInventory } from "./PlateInventory";
+import { EquipmentSection } from "./EquipmentSection";
 import { PlateResults } from "./PlateResults";
 import type { CalculatorDefaults } from "../lib/constants";
 
@@ -53,14 +52,11 @@ export function Calculator({ defaults }: { defaults: CalculatorDefaults }) {
         onTargetChange={setTargetWeight}
       />
 
-      <BarbellConfigSection
+      <EquipmentSection
         barbellWeight={barbellWeight}
-        onChange={setBarbellWeight}
-      />
-
-      <PlateInventory
         plateInventory={plateInventory}
-        onChange={setPlateCount}
+        onBarbellChange={setBarbellWeight}
+        onPlateChange={setPlateCount}
         open={inventoryOpen}
         onToggle={setInventoryOpen}
       />
