@@ -9,16 +9,16 @@ export type CalculatorDefaults = {
 export const DEFAULT_TARGET = 60;
 export const DEFAULT_BAR = 20;
 export const DEFAULT_PLATE_INVENTORY: Record<number, number> = {
-  25: 1,
-  20: 1,
-  15: 1,
-  10: 1,
-  5: 1,
-  2.5: 1,
-  2: 1,
-  1.25: 1,
-  1: 1,
-  0.5: 1,
+  25: 2,
+  20: 2,
+  15: 2,
+  10: 2,
+  5: 2,
+  2.5: 2,
+  2: 0,
+  1.25: 2,
+  1: 0,
+  0.5: 0,
 };
 
 export const HOME_DEFAULTS: CalculatorDefaults = {
