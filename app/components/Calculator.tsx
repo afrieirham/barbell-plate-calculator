@@ -38,7 +38,7 @@ export function Calculator({ defaults }: { defaults: CalculatorDefaults }) {
   return (
     <div className="max-w-xl mx-auto px-4 py-10 space-y-6">
       <header>
-        <h1 className="text-lg font-bold text-gray-900">
+        <h1 className="text-lg font-bold text-neutral-900 dark:text-white">
           Barbell Plate Calculator
         </h1>
       </header>

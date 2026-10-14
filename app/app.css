@@ -7,6 +7,6 @@
 
 html,
 body {
-  @apply bg-white text-gray-900;
-  color-scheme: light;
+  @apply bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100;
+  color-scheme: light dark;
 }
