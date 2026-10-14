@@ -36,7 +36,7 @@ function PlateCountInput({
         const n = Number(raw);
         if (!isNaN(n)) onChange(weight, Math.max(n, 0));
       }}
-      className="w-14 h-7 text-center text-xs font-medium tabular-nums border border-gray-200 rounded bg-white text-gray-700 focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      className="w-14 h-7 text-center text-xs font-medium tabular-nums border border-neutral-200 rounded bg-white text-neutral-700 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:focus:border-neutral-100 dark:focus:ring-neutral-100 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       min={0}
       max={99}
     />
@@ -62,7 +62,7 @@ export function EquipmentSection({
       <button
         type="button"
         onClick={() => onToggle(!open)}
-        className="text-xs font-semibold text-gray-400 uppercase tracking-widest cursor-pointer flex items-center gap-2 select-none w-full text-left"
+        className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest cursor-pointer flex items-center gap-2 select-none w-full text-left"
       >
         Barbell &amp; Plates
         <svg
@@ -84,7 +84,7 @@ export function EquipmentSection({
       >
         <div className="space-y-5 pt-1">
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
               Barbell Weight
             </h3>
             <div className="flex items-center gap-2">
@@ -98,16 +98,18 @@ export function EquipmentSection({
                   const n = Number(raw);
                   if (!isNaN(n)) onBarbellChange(n);
                 }}
-                className="w-20 px-2 py-1.5 text-center border border-gray-200 rounded-lg text-sm tabular-nums focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"
+                className="w-20 px-2 py-1.5 text-center border border-neutral-200 bg-white text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 rounded-lg text-sm tabular-nums focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:focus:border-neutral-100 dark:focus:ring-neutral-100 outline-none"
                 min={0}
                 step={0.5}
               />
-              <span className="text-sm text-gray-500">kg</span>
+              <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                kg
+              </span>
             </div>
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
               Available Plates (pairs)
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 max-w-sm md:max-w-none">
@@ -119,13 +121,15 @@ export function EquipmentSection({
                     key={weight}
                     className={`flex items-center gap-3 py-2 px-3 rounded-xl border-2 transition-all ${
                       active
-                        ? "bg-indigo-50 border-indigo-400"
-                        : "bg-gray-50 border-gray-100"
+                        ? "bg-white border-neutral-900 dark:bg-neutral-900 dark:border-white"
+                        : "bg-neutral-50 border-neutral-200 dark:bg-neutral-950 dark:border-neutral-800"
                     }`}
                   >
                     <span
                       className={`text-sm font-semibold w-12 text-right ${
-                        active ? "text-indigo-700" : "text-gray-400"
+                        active
+                          ? "text-neutral-900 dark:text-white"
+                          : "text-neutral-400 dark:text-neutral-500"
                       }`}
                     >
                       {weight}
@@ -135,7 +139,7 @@ export function EquipmentSection({
                       <button
                         onClick={() => onPlateChange(weight, count - 1)}
                         disabled={count === 0}
-                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed leading-none"
+                        className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed leading-none"
                       >
                         –
                       </button>
@@ -146,7 +150,7 @@ export function EquipmentSection({
                       />
                       <button
                         onClick={() => onPlateChange(weight, count + 1)}
-                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors leading-none"
+                        className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 rounded-lg text-sm font-medium transition-colors leading-none"
                       >
                         +
                       </button>

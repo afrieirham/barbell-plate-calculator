@@ -30,21 +30,23 @@ export function TargetWeightSection({
 
   return (
     <section className="space-y-3">
-      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+      <h2 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
         Target Weight
       </h2>
-      <p className="text-5xl font-bold text-gray-900 tabular-nums">
+      <p className="text-5xl font-bold text-neutral-900 dark:text-white tabular-nums">
         {targetWeight}
-        <span className="text-2xl font-normal text-gray-400 ml-1">kg</span>
+        <span className="text-2xl font-normal text-neutral-400 dark:text-neutral-500 ml-1">
+          kg
+        </span>
       </p>
-      <p className="text-xs text-gray-400 -mt-1">
+      <p className="text-xs text-neutral-400 dark:text-neutral-500 -mt-1">
         Max weight: {maxWeight} kg
       </p>
       <div className="flex items-center gap-2">
         <button
           onClick={() => prevWeight !== null && onTargetChange(prevWeight)}
           disabled={prevWeight === null}
-          className="w-24 shrink-0 whitespace-nowrap px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium tabular-nums text-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-24 shrink-0 whitespace-nowrap px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 rounded-lg text-sm font-medium tabular-nums text-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           {prevDelta !== null ? `– ${prevDelta} kg` : "–"}
         </button>
@@ -58,20 +60,20 @@ export function TargetWeightSection({
             const n = Number(raw);
             if (!isNaN(n)) onTargetChange(n);
           }}
-          className="w-20 px-2 py-1.5 text-center border border-gray-200 rounded-lg text-sm tabular-nums focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none"
+          className="w-20 px-2 py-1.5 text-center border border-neutral-200 bg-white text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 rounded-lg text-sm tabular-nums focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900 dark:focus:border-neutral-100 dark:focus:ring-neutral-100 outline-none"
           min={barbellWeight}
           step={0.5}
         />
         <button
           onClick={() => nextWeight !== null && onTargetChange(nextWeight)}
           disabled={nextWeight === null}
-          className="w-24 shrink-0 whitespace-nowrap px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium tabular-nums text-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="w-24 shrink-0 whitespace-nowrap px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 rounded-lg text-sm font-medium tabular-nums text-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           {nextDelta !== null ? `+ ${nextDelta} kg` : "+"}
         </button>
       </div>
       {targetWeight === barbellWeight && (
-        <p className="text-sm text-amber-500">
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
           Add weight above barbell to calculate plates
         </p>
       )}

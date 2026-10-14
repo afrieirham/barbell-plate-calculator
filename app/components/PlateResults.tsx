@@ -44,11 +44,11 @@ export function PlateResults({
   if (targetWeight <= barbellWeight) {
     return (
       <section className="space-y-3">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+        <h2 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
           Results
         </h2>
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-          <p className="text-sm text-gray-500">
+        <div className="bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 rounded-xl p-4">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
             Set a target weight above the barbell to see the plate breakdown.
           </p>
         </div>
@@ -60,11 +60,11 @@ export function PlateResults({
   if (!result || result.perSide.length === 0) {
     return (
       <section className="space-y-3">
-        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+        <h2 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
           Results
         </h2>
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <p className="text-sm text-amber-700">
+        <div className="bg-neutral-100 border border-neutral-300 dark:bg-neutral-900 dark:border-neutral-700 rounded-xl p-4">
+          <p className="text-sm text-neutral-700 dark:text-neutral-300">
             No plates are available to load. Enable some plates above.
           </p>
         </div>
@@ -75,30 +75,30 @@ export function PlateResults({
 
   return (
     <section className="space-y-3">
-      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+      <h2 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
         Results
       </h2>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+      <div className="bg-white border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800 rounded-xl p-5 space-y-4">
         <div>
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-2">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 uppercase tracking-wide font-medium mb-2">
             Per side
           </p>
           <PlateVisualization allocations={result.perSide} />
         </div>
 
-        <div className="border-t border-gray-100 pt-4">
-          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-1">
+        <div className="border-t border-neutral-100 dark:border-neutral-800 pt-4">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 uppercase tracking-wide font-medium mb-1">
             Total plates needed
           </p>
-          <p className="text-base text-gray-700">
+          <p className="text-base text-neutral-700 dark:text-neutral-300">
             {formatAllocation(result.perSide, 2)}
           </p>
         </div>
 
         {!result.exact && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <p className="text-sm text-amber-700">
+          <div className="bg-neutral-100 border border-neutral-300 dark:bg-neutral-800 dark:border-neutral-700 rounded-lg p-3">
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               Exact weight cannot be loaded with current plates. Closest match:{" "}
               <strong>{result.totalWeightAchieved} kg</strong> (short by{" "}
               {result.shortBy * 2} kg total).
@@ -122,11 +122,12 @@ function ShareButton({
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-sm font-medium transition-colors"
+      className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-lg text-sm font-medium transition-colors"
     >
       {copied ? (
         <>
-          <span className="text-indigo-700">✓</span> Saved!
+          <span className="text-neutral-700 dark:text-neutral-200">✓</span>{" "}
+          Saved!
         </>
       ) : (
         <>
